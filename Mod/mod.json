@@ -1,0 +1,8 @@
+{
+    "id": "io.github.mio-modding.mio-combat-tweaks",
+    "name": "Combat Tweaks",
+    "main": "CombatTweaks.dll",
+    "dependencies": [
+        "io.github.mio-modding.mio-modding-api"
+    ]
+}
