@@ -13,6 +13,8 @@ public unsafe class CombatTweaksMod : Mod
     private NumberOption? slash_multiplier_option;
     private NumberOption? shairpin_multiplier_option;
     private NumberOption? crit_multiplier_option;
+    private ToggleOption? strider_dmg_toggle;
+    private ToggleOption? wildcat_cancel_fix;
 
     public override void Initialize()
     {
@@ -25,6 +27,8 @@ public unsafe class CombatTweaksMod : Mod
     {
         On.MioGame.GlobalFunctions.game.On_mio.compute_slash_damage.Suffix += Compute_slash_damage_suffix;
         On.MioGame.GlobalFunctions.game.On_mio.compute_hook_slash_damage.Suffix += Compute_hook_slash_damage_suffix;
+        On.MioGame.GlobalFunctions.game.On_mio.mio_compute_damage.Suffix += Mio_compute_damage_suffix;
+        On.MioGame.On_Game.fixed_update.Prefix += Fixed_update_Prefix;
         LogMessage("Connected hooks");
     }
 
@@ -35,6 +39,9 @@ public unsafe class CombatTweaksMod : Mod
         slash_multiplier_option = modPage.RegisterNumber("slash_multiplier", "Slash Damage Multiplier", 10, 100, 10, 100, "% Multiplier to apply to slash damage");
         shairpin_multiplier_option = modPage.RegisterNumber("shairpin_multiplier", "Sharpened Hairpin Damage Multiplier", 10, 100, 10, 100, "% Multiplier to apply to sharpened Hairpin damage");
         crit_multiplier_option = modPage.RegisterNumber("crit_multiplier", "Sharpened Hairpin crit multiplier", 0, 50, 10, 50, "% Multiplier to damage of Sharpened Hairpin crits");
+        strider_dmg_toggle = modPage.RegisterToggle("strider_dmg_toggle", "Strider Damage fix", false, "Makes strider spear do the correct amount of damage at 5 attack upgrades");
+        wildcat_cancel_fix = modPage.RegisterToggle("wildcat_cancel_fix", "Wildcat fix", false, "Fixes the Wildcat buff being ended by non-slash sources of damage");
+
         LogMessage("Registered options");
     }
 
@@ -42,6 +49,14 @@ public unsafe class CombatTweaksMod : Mod
     {
         retBuffer->@base *= nerf_mult;
         retBuffer->upgrade *= nerf_mult;
+    }
+
+    public void Mio_compute_damage_suffix(Damage* retBuffer, Mio* mio, Mio.Slash.Attack_damage atk)
+    {
+        if (strider_dmg_toggle?.Value is true && atk == Mio.Slash.Attack_damage.Dmg_spear && retBuffer->upgrade == 100)
+        {
+            retBuffer->upgrade = 170;
+        }
     }
 
     public void Compute_slash_damage_suffix(Damage* retBuffer, Mio* mio, Mio.Slash.Attack* atk)
@@ -66,4 +81,17 @@ public unsafe class CombatTweaksMod : Mod
             retBuffer->modifier += (float)(crit_multiplier_option?.Value ?? 50) / 100f;
         }
     }
+
+    private void Fixed_update_Prefix(MioGame.Game* __this)
+    {
+        bool berserker_ult = __this->mio.slash.berserker.ult_charged._value;
+        bool berserker_ult_consume_next_frame = __this->mio.slash.berserker.consume_ult_next_frame;
+        bool slash_is_active = __this->mio.slash.active._value;
+
+        if (wildcat_cancel_fix?.Value is true && !slash_is_active && berserker_ult && berserker_ult_consume_next_frame) // fixes wildcat being cancelled by non-slash damage
+        {
+            __this->mio.slash.berserker.consume_ult_next_frame = false;
+        }
+    }
+
 }
