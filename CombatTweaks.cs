@@ -15,6 +15,7 @@ public unsafe class CombatTweaksMod : Mod
     private NumberOption? crit_multiplier_option;
     private ToggleOption? strider_dmg_toggle;
     private ToggleOption? wildcat_cancel_fix;
+    private ToggleOption? log_damage_info;
 
     public override void Initialize()
     {
@@ -41,6 +42,7 @@ public unsafe class CombatTweaksMod : Mod
         crit_multiplier_option = modPage.RegisterNumber("crit_multiplier", "Sharpened Hairpin crit multiplier", 0, 50, 10, 50, "% Multiplier to damage of Sharpened Hairpin crits");
         strider_dmg_toggle = modPage.RegisterToggle("strider_dmg_toggle", "Strider Damage fix", false, "Makes strider spear do the correct amount of damage at 5 attack upgrades");
         wildcat_cancel_fix = modPage.RegisterToggle("wildcat_cancel_fix", "Wildcat fix", false, "Fixes the Wildcat buff being ended by non-slash sources of damage");
+        log_damage_info = modPage.RegisterToggle("log_damage_info", "Damage numbers", false, "Display damage numbers");
 
         LogMessage("Registered options");
     }
@@ -92,6 +94,7 @@ public unsafe class CombatTweaksMod : Mod
         {
             __this->mio.slash.berserker.consume_ult_next_frame = false;
         }
+        __this->mio.debug.log_damage_info = log_damage_info?.Value is true;
     }
 
 }
