@@ -4,8 +4,8 @@ schemaVersion = "0.0.1"
 [package]
 namespace = "Etacam"
 name = "CombatTweaks"
-versionNumber = "0.0.3"
-description = "Example mod description"
+versionNumber = "0.0.4"
+description = "Fixes bugs with the combat system and lets you customise your damage"
 websiteUrl = "https://github.com/Etacam/mio-combat-tweaks"
 containsNsfwContent = false
 

@@ -61,7 +61,7 @@ public unsafe class CombatTweaksMod : Mod
         {
             retBuffer->upgrade = 170;
         }
-        if ((spear_multiplier_option?.Value ?? 100) != 100)
+        if ((spear_multiplier_option?.Value ?? 100) != 100 && atk == Mio.Slash.Attack_damage.Dmg_spear)
         {
             Nerf(retBuffer, (float)(spear_multiplier_option?.Value ?? 100) / 100f);
         }
