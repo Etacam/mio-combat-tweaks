@@ -13,6 +13,7 @@ public unsafe class CombatTweaksMod : Mod
     private NumberOption? slash_multiplier_option;
     private NumberOption? shairpin_multiplier_option;
     private NumberOption? crit_multiplier_option;
+    private NumberOption? spear_multiplier_option;
     private ToggleOption? strider_dmg_toggle;
     private ToggleOption? wildcat_cancel_fix;
     private ToggleOption? log_damage_info;
@@ -37,9 +38,10 @@ public unsafe class CombatTweaksMod : Mod
     {
         modPage = ModMenu.RegisterMod(this, "Combat Tweaks", "Combat Tweaks Mod Options");
 
-        slash_multiplier_option = modPage.RegisterNumber("slash_multiplier", "Slash Damage Multiplier", 10, 100, 10, 100, "% Multiplier to apply to slash damage");
-        shairpin_multiplier_option = modPage.RegisterNumber("shairpin_multiplier", "Sharpened Hairpin Damage Multiplier", 10, 100, 10, 100, "% Multiplier to apply to sharpened Hairpin damage");
-        crit_multiplier_option = modPage.RegisterNumber("crit_multiplier", "Sharpened Hairpin crit multiplier", 0, 50, 10, 50, "% Multiplier to damage of Sharpened Hairpin crits");
+        slash_multiplier_option = modPage.RegisterNumber("slash_multiplier", "Slash Damage Multiplier", 10, 200, 10, 100, "% Multiplier to apply to slash damage");
+        shairpin_multiplier_option = modPage.RegisterNumber("shairpin_multiplier", "Sharpened Hairpin Damage Multiplier", 10, 200, 10, 100, "% Multiplier to apply to sharpened Hairpin damage");
+        crit_multiplier_option = modPage.RegisterNumber("crit_multiplier", "Sharpened Hairpin crit multiplier", 0, 100, 10, 50, "% Multiplier to damage of Sharpened Hairpin crits");
+        spear_multiplier_option = modPage.RegisterNumber("spear_multiplier", "Strider spear multiplier", 10, 200, 10, 100, "% Multiplier to damage of Strider spear");
         strider_dmg_toggle = modPage.RegisterToggle("strider_dmg_toggle", "Strider Damage fix", false, "Makes strider spear do the correct amount of damage at 5 attack upgrades");
         wildcat_cancel_fix = modPage.RegisterToggle("wildcat_cancel_fix", "Wildcat fix", false, "Fixes the Wildcat buff being ended by non-slash sources of damage");
         log_damage_info = modPage.RegisterToggle("log_damage_info", "Damage numbers", false, "Display damage numbers");
@@ -58,6 +60,10 @@ public unsafe class CombatTweaksMod : Mod
         if (strider_dmg_toggle?.Value is true && atk == Mio.Slash.Attack_damage.Dmg_spear && retBuffer->upgrade == 100)
         {
             retBuffer->upgrade = 170;
+        }
+        if ((spear_multiplier_option?.Value ?? 100) != 100)
+        {
+            Nerf(retBuffer, (float)(spear_multiplier_option?.Value ?? 100) / 100f);
         }
     }
 

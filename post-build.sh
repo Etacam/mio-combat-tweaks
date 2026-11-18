@@ -1,3 +1,4 @@
-mkdir ./build/CombatTweaks/ -p
-cp ./bin/Debug/net8.0/CombatTweaks.dll ./build/CombatTweaks/
-cp ./Mod/mod.json ./build/CombatTweaks/
+rm -rf ./bin/$2/
+mkdir ./bin/$2/ -p
+cp $1 ./bin/$2/
+cp ./Mod/* --target-directory ./bin/$2/
